@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nosso Date</title>
     <style>
         /* --- O VISUAL (CSS) --- */
@@ -29,10 +29,7 @@
             position: relative;
         }
 
-        /* A classe 'passo' esconde as telas por padrão */
         .passo { display: none; }
-        
-        /* A classe 'ativo' mostra a tela atual */
         .ativo { display: block; }
 
         h2 { font-size: 22px; margin-bottom: 20px; }
@@ -68,7 +65,6 @@
         #btn-nao {
             background-color: #333;
             color: white;
-            /* A linha 'position: absolute' foi removida para os botões alinharem no início */
         }
 
         input[type="date"], input[type="time"] {
@@ -137,48 +133,48 @@
     <script>
         /* --- A LÓGICA (JAVASCRIPT) --- */
         
-        // 1. Variáveis para guardar as escolhas
         let dataEscolhida = "";
         let horaEscolhida = "";
         let comidaEscolhida = "";
         let vibeEscolhida = "";
 
-        
-       // 2. Lógica do botão fujão (Agora funciona no PC e no Celular!)
+        // Lógica Blindada do Botão Fujão
         const btnNao = document.getElementById('btn-nao');
 
-        // Criamos uma função separada com a matemática de fugir
         function fogeBotao(evento) {
-            // Se for no celular, isso impede que o toque vire um clique sem querer
-            if (evento.type === 'touchstart') {
+            // Se for no celular, bloqueia o comportamento padrão para não virar um clique/zoom
+            if (evento && evento.cancelable) {
                 evento.preventDefault(); 
             }
 
             btnNao.style.position = 'fixed';
-            const maxLargura = window.innerWidth - btnNao.offsetWidth;
-            const maxAltura = window.innerHeight - btnNao.offsetHeight;
             
-            btnNao.style.left = Math.floor(Math.random() * maxLargura) + 'px';
-            btnNao.style.top = Math.floor(Math.random() * maxAltura) + 'px';
+            // Margem de segurança de 20px para não sair da tela
+            const maxLargura = window.innerWidth - btnNao.offsetWidth - 20; 
+            const maxAltura = window.innerHeight - btnNao.offsetHeight - 20;
+            
+            const aleatorioX = Math.max(10, Math.floor(Math.random() * maxLargura));
+            const aleatorioY = Math.max(10, Math.floor(Math.random() * maxAltura));
+
+            btnNao.style.left = aleatorioX + 'px';
+            btnNao.style.top = aleatorioY + 'px';
         }
 
-        // Avisamos o botão para fugir tanto do mouse quanto do dedo na tela
+        // Adiciona a fuga para mouse, primeiro toque no celular e clique de teimosia
         btnNao.addEventListener('mouseover', fogeBotao);
-        btnNao.addEventListener('touchstart', fogeBotao);
-        });
+        btnNao.addEventListener('touchstart', fogeBotao, { passive: false });
+        btnNao.addEventListener('click', fogeBotao);
 
-        // 3. Função para trocar de tela
+        // A função do botão SIM que provavelmente havia sido apagada
         function irParaTela(idNovaTela) {
-            // Esconde todas as telas
             const todasAsTelas = document.querySelectorAll('.passo');
             todasAsTelas.forEach(tela => {
                 tela.classList.remove('ativo');
             });
-            // Mostra só a tela que queremos
             document.getElementById(idNovaTela).classList.add('ativo');
         }
 
-        // 4. Funções para salvar as escolhas e ir para a próxima tela
+        // Funções do restante das telas
         function salvarData() {
             dataEscolhida = document.getElementById('input-data').value;
             horaEscolhida = document.getElementById('input-hora').value;
@@ -198,7 +194,6 @@
         function salvarVibe(vibe) {
             vibeEscolhida = vibe;
             
-            // Preenche o resumo final antes de mostrar a última tela
             document.getElementById('resumo-data').innerText = dataEscolhida;
             document.getElementById('resumo-hora').innerText = horaEscolhida;
             document.getElementById('resumo-comida').innerText = comidaEscolhida;
