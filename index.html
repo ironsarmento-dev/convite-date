@@ -143,19 +143,28 @@
         let comidaEscolhida = "";
         let vibeEscolhida = "";
 
-        // 2. Lógica do botão fujão
+        
+       // 2. Lógica do botão fujão (Agora funciona no PC e no Celular!)
         const btnNao = document.getElementById('btn-nao');
-        btnNao.addEventListener('mouseover', function() {
-            
-            // Usamos 'fixed' para ele se soltar da caixa vermelha e usar a tela toda
-            btnNao.style.position = 'fixed';
 
-            // Agora a conta usa 'window.innerWidth/Height' (o tamanho da janela do seu navegador)
+        // Criamos uma função separada com a matemática de fugir
+        function fogeBotao(evento) {
+            // Se for no celular, isso impede que o toque vire um clique sem querer
+            if (evento.type === 'touchstart') {
+                evento.preventDefault(); 
+            }
+
+            btnNao.style.position = 'fixed';
             const maxLargura = window.innerWidth - btnNao.offsetWidth;
             const maxAltura = window.innerHeight - btnNao.offsetHeight;
             
             btnNao.style.left = Math.floor(Math.random() * maxLargura) + 'px';
             btnNao.style.top = Math.floor(Math.random() * maxAltura) + 'px';
+        }
+
+        // Avisamos o botão para fugir tanto do mouse quanto do dedo na tela
+        btnNao.addEventListener('mouseover', fogeBotao);
+        btnNao.addEventListener('touchstart', fogeBotao);
         });
 
         // 3. Função para trocar de tela
